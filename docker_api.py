@@ -1,10 +1,12 @@
 import docker
 import logging
+from config import config
 
 
 class DockerApi:
 
-    def __init__(self, docker_base_url: str):
+    def __init__(self):
+        docker_base_url: str = config.get("DEFAULT", "docker_base_url")
         logging.info(f"Initialize docker client with base url: {docker_base_url}")
         self.__client = docker.DockerClient(base_url=docker_base_url)
 
