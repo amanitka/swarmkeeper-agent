@@ -3,7 +3,7 @@ import requests
 from requests import Response
 
 from config.config import config
-from container.docker_api import DockerApi
+from docker_service.docker_api import DockerApi
 
 
 class ContainerService:
@@ -29,13 +29,13 @@ class ContainerService:
             self.__remove_unused_image()
 
     def report_container_status(self):
-        logging.info("Report container status to swarmkeeper")
+        logging.info("Report docker_service status to swarmkeeper")
         container_list: list[dict] = self.__docker_api.get_running_container_list()
         try:
             response: Response = requests.post(f"{self.__swarmkeeper_url}/api/status/container", json=container_list)
             if response.status_code == 200:
                 logging.info(f"Container status was sent to swarmkeeper. Response: {response.json()}")
             else:
-                logging.error(f"Unable to send container status to swarmkeeper. Http status: {response.status_code}, response: {response.json()}")
+                logging.error(f"Unable to send docker_service status to swarmkeeper. Http status: {response.status_code}, text: {response.text}")
         except Exception as e:
-            logging.error(f"Unable to send container status to swarmkeeper. Error: {e}")
+            logging.error(f"Unable to send docker_service status to swarmkeeper. Error: {e}")

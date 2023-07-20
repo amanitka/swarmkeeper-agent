@@ -4,7 +4,7 @@ import atexit
 
 from apscheduler.triggers.cron import CronTrigger
 
-from container.container_service import ContainerService
+from docker_service.container_service import ContainerService
 from config.config import config
 
 
