@@ -4,8 +4,8 @@ import atexit
 
 from apscheduler.triggers.cron import CronTrigger
 
-from container_service import ContainerService
-from config import config
+from container.container_service import ContainerService
+from config.config import config
 
 
 # Initiate logging

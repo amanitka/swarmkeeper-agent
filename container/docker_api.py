@@ -1,13 +1,14 @@
-import docker
+
 import logging
-from config import config
+from config.config import config
+import docker
 
 
 class DockerApi:
 
     def __init__(self):
         docker_base_url: str = config.get("DEFAULT", "docker_base_url")
-        logging.info(f"Initialize docker client with base url: {docker_base_url}")
+        logging.info(f"Initialize container client with base url: {docker_base_url}")
         self.__client = docker.DockerClient(base_url=docker_base_url)
 
     @staticmethod
@@ -43,7 +44,7 @@ class DockerApi:
             container_list.append({"id": container.id,
                                    "name": container.name,
                                    "image_digest_list": self.__get_image_digest_for_container(container.image.id, image_dict),
-                                   "stack_namespace": container.labels["com.docker.stack.namespace"] if "com.docker.stack.namespace" in container.labels else "",
-                                   "id_service": container.labels["com.docker.swarm.service.id"] if "com.docker.swarm.service.id" in container.labels else "",
-                                   "service_name": container.labels["com.docker.swarm.service.name"] if "com.docker.swarm.service.name" in container.labels else ""})
+                                   "stack_namespace": container.labels["com.container.stack.namespace"] if "com.container.stack.namespace" in container.labels else "",
+                                   "id_service": container.labels["com.container.swarm.service.id"] if "com.container.swarm.service.id" in container.labels else "",
+                                   "service_name": container.labels["com.container.swarm.service.name"] if "com.container.swarm.service.name" in container.labels else ""})
         return container_list

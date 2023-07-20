@@ -2,8 +2,8 @@ import logging
 import requests
 from requests import Response
 
-from config import config
-from docker_api import DockerApi
+from config.config import config
+from container.docker_api import DockerApi
 
 
 class ContainerService:
@@ -23,8 +23,10 @@ class ContainerService:
         self.__docker_api.remove_unused_image()
 
     def cleanup(self):
-        self.__remove_stopped_container()
-        self.__remove_unused_image()
+        if self.__container_cleanup:
+            self.__remove_stopped_container()
+        if self.__image_cleanup:
+            self.__remove_unused_image()
 
     def report_container_status(self):
         logging.info("Report container status to swarmkeeper")
