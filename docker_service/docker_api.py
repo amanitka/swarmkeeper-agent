@@ -32,7 +32,7 @@ class DockerApi:
     def get_image_dict(self) -> dict:
         image_dict: dict = {}
         image_list = self.__client.images.list()
-        for image in self.__client.images.list():
+        for image in image_list:
             image_dict[image.id] = {"image_tag_list": image.tags,
                                     "image_digest_list": image.attrs.get("RepoDigests")}
         return image_dict
