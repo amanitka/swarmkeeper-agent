@@ -6,9 +6,6 @@ pipeline {
         email_to = 'ludek.p@email.cz'
     }
     agent any
-    tools {
-        maven "maven"
-    }
     stages {
         stage('Checkout') {
             steps {
