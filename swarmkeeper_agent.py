@@ -27,8 +27,8 @@ if __name__ == '__main__':
     report_schedule: list = config.get("DEFAULT", "report_cron_schedule").split(" ")
     cleanup_schedule: list = config.get("DEFAULT", "cleanup_cron_schedule").split(" ")
     container_service: ContainerService = ContainerService()
-    scheduler.add_job(func=container_service.process_running_container,
-                      name="Process container job",
+    scheduler.add_job(func=container_service.report_service_container_status,
+                      name="Report service container status",
                       trigger=CronTrigger(second=report_schedule[0], minute=report_schedule[1], hour=report_schedule[2],
                                           day=report_schedule[3], month=report_schedule[4], year=report_schedule[5]))
     scheduler.add_job(func=container_service.cleanup,

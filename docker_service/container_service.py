@@ -22,8 +22,9 @@ class ContainerService:
         logging.info("Cleanup unused images")
         self.__docker_api.remove_unused_image()
 
-    def __report_service_container_status(self, service_container_list: list[dict]):
+    def report_service_container_status(self):
         logging.info("Report service container status to swarmkeeper")
+        service_container_list = self.__docker_api.get_running_container_list()
         try:
             response: Response = requests.post(f"{self.__swarmkeeper_url}/api/status/container", json=service_container_list)
             if response.status_code == 200:
@@ -33,34 +34,8 @@ class ContainerService:
         except Exception as e:
             logging.error(f"Unable to send docker_service status to swarmkeeper. Error: {e}")
 
-    @staticmethod
-    def __can_process_container(container: dict) -> bool:
-        if container["process_flag"] == "N":
-            logging.info(f"Skip processing of container {container['name']}, because it was disabled label")
-            return False
-        else:
-            return True
-
-    def __process_container(self, container: dict):
-        if self.__can_process_container(container):
-            image_digest_repository: str = self.__docker_api.get_image_digest_registry(container["image_tag"])
-            if image_digest_repository in container["image_digest_list"]:
-                logging.info(f"Container {container['name']} is using up to date image")
-            else:
-                logging.info(f"Container {container['name']} is using outdated image and should be updated!")
-
-    def __process_container_list(self, non_service_container_list: list[dict]):
-        logging.info("Process containers which doesn't belong to any service")
-        for container in non_service_container_list:
-            self.__process_container(container)
-
     def cleanup(self):
         if self.__container_cleanup:
             self.__remove_stopped_container()
         if self.__image_cleanup:
             self.__remove_unused_image()
-
-    def process_running_container(self):
-        service_container_list, container_list = self.__docker_api.get_running_container_list()
-        self.__report_service_container_status(service_container_list)
-        self.__process_container_list(container_list)
